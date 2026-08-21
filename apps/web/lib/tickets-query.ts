@@ -1,0 +1,3 @@
+export const TICKETS_QUERY = `query($status:TicketStatus,$priority:Priority,$slaState:SLAState,$assigneeId:ID,$sort:TicketSort,$cursor:String,$take:Int){ tickets(status:$status,priority:$priority,slaState:$slaState,assigneeId:$assigneeId,sort:$sort,cursor:$cursor,take:$take) { totalCount pageInfo { hasNextPage endCursor } edges { cursor node { id reference title priority status createdAt assignee{name} sla { firstResponseState resolutionState resolutionRemainingMinutes isBusinessHoursOpen } } } } users(role:AGENT){id name} }`;
+
+export const formatTicketState = (value: string): string => value.replaceAll("_", " ");
