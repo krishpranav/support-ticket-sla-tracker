@@ -1,0 +1,19 @@
+scalar DateTime
+enum Priority { LOW MEDIUM HIGH URGENT }
+enum TicketStatus { OPEN IN_PROGRESS WAITING_ON_CUSTOMER RESOLVED CLOSED }
+enum UserRole { REPORTER AGENT }
+enum SLAState { ON_TRACK AT_RISK BREACHED MET PAUSED }
+enum TicketSort { NEWEST OLDEST }
+type User { id: ID! name: String! email: String! role: UserRole! }
+type Comment { id: ID! content: String! createdAt: DateTime! author: User! }
+type Holiday { id: ID! date: DateTime! name: String! }
+type TicketEvent { id: ID! type: String! createdAt: DateTime! actor: User! }
+type SLAInfo { firstResponseDueAt: DateTime! resolutionDueAt: DateTime! firstResponseState: SLAState! resolutionState: SLAState! firstResponseRemainingMinutes: Int! resolutionRemainingMinutes: Int! isBusinessHoursOpen: Boolean! }
+type Ticket { id: ID! reference: Int! title: String! description: String! priority: Priority! status: TicketStatus! reporter: User! assignee: User createdAt: DateTime! firstResponseAt: DateTime resolvedAt: DateTime sla: SLAInfo! comments: [Comment!]! events: [TicketEvent!]! }
+type TicketEdge { cursor: String! node: Ticket! }
+type PageInfo { hasNextPage: Boolean! endCursor: String }
+type TicketConnection { edges: [TicketEdge!]! pageInfo: PageInfo! totalCount: Int! }
+type TicketDashboard { open: Int! inProgress: Int! waiting: Int! atRisk: Int! breached: Int! resolvedToday: Int! }
+type AuthPayload { token: String! user: User! }
+type Query { tickets(status: TicketStatus, priority: Priority, assigneeId: ID, slaState: SLAState, sort: TicketSort, take: Int, cursor: String): TicketConnection! ticket(id: ID!): Ticket dashboard: TicketDashboard! users(role: UserRole): [User!]! holidays: [Holiday!]! me: User }
+type Mutation { register(name: String!, email: String!, password: String!, role: UserRole!, inviteCode: String): AuthPayload! login(email: String!, password: String!): AuthPayload! createTicket(title: String!, description: String!, priority: Priority!): Ticket! assignTicket(ticketId: ID!, assigneeId: ID!): Ticket! changeTicketStatus(ticketId: ID!, status: TicketStatus!): Ticket! resolveTicket(ticketId: ID!): Ticket! addComment(ticketId: ID!, content: String!): Comment! createHoliday(date: DateTime!, name: String!): Holiday! deleteHoliday(id: ID!): Boolean! }
