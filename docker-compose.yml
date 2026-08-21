@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: support
+      POSTGRES_PASSWORD: support
+      POSTGRES_DB: support
+    ports: ["5432:5432"]
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U support -d support"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  db-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: support
+      POSTGRES_PASSWORD: support
+      POSTGRES_DB: support_test
+    ports: ["${TEST_DB_PORT:-5434}:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U support -d support_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  api:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://support:support@db:5432/support?schema=public
+      JWT_SECRET: replace-with-a-long-random-secret-at-least-32-characters
+      BUSINESS_TIMEZONE: Asia/Kolkata
+      AGENT_INVITE_CODE: burdenoff-agent
+      API_PORT: 4000
+    ports: ["4000:4000"]
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://api:4000/graphql
+    ports: ["3000:3000"]
+    depends_on: [api]
+volumes:
+  postgres-data:

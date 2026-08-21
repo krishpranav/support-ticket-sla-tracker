@@ -1,0 +1,16 @@
+{
+  "name": "@support/api", "private": true, "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/server.ts", "start": "bun src/server.ts",
+    "typecheck": "tsc --noEmit", "lint": "eslint src tests --max-warnings 0",
+    "test:unit": "bun test tests/unit", "test:integration": "DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://support:support@localhost:5434/support_test?schema=public}\" bunx prisma migrate deploy && TEST_DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://support:support@localhost:5434/support_test?schema=public}\" bun test tests/integration",
+    "prisma": "prisma", "bench": "DATABASE_URL=\"${BENCH_DATABASE_URL:-postgresql://support:support@localhost:5432/support?schema=public}\" bun src/bench.ts"
+  },
+  "prisma": { "seed": "bun prisma/seed.ts" },
+  "dependencies": {
+    "@graphql-tools/schema": "^10.0.23", "@prisma/client": "^6.6.0",
+    "graphql": "^16.10.0", "graphql-yoga": "^5.13.5", "jose": "^5.10.0",
+    "luxon": "^3.6.1", "pino": "^9.6.0", "zod": "^3.24.3"
+  },
+  "devDependencies": { "@types/bun": "latest", "@types/luxon": "^3.4.2", "eslint": "^9.24.0", "prisma": "^6.6.0", "typescript": "^5.8.3", "typescript-eslint": "^8.29.0" }
+}

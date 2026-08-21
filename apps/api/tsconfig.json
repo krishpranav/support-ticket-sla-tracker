@@ -1,0 +1,1 @@
+{ "extends": "../../tsconfig.base.json", "compilerOptions": { "types": ["bun"], "outDir": "dist" }, "include": ["src", "tests", "prisma"] }

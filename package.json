@@ -1,0 +1,18 @@
+{
+  "name": "burdenoff-support-tracker",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"bun --cwd apps/api dev\" \"bun --cwd apps/web dev\"",
+    "dev:api": "bun --cwd apps/api dev",
+    "dev:web": "bun --cwd apps/web dev",
+    "typecheck": "bun --cwd apps/api typecheck && bun --cwd apps/web typecheck",
+    "lint": "bun --cwd apps/api lint && bun --cwd apps/web lint",
+    "test:unit": "bun --cwd apps/api test:unit",
+    "test:integration": "bun --cwd apps/api test:integration",
+    "gendb": "bun --cwd apps/api prisma generate && bun --cwd apps/api prisma migrate dev",
+    "seed": "bun --cwd apps/api prisma db seed",
+    "bench": "bun --cwd apps/api bench"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}
